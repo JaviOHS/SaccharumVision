@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "macros.html" import link_button %}
+
+{% block title %}404 - Página no encontrada | SaccharumVision{% endblock %}
+
+{% block subtitle %}Error 404 - Página no Encontrada{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/404.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="error-404-container">
+    <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    
+    <div class="error-code">404</div>
+    
+    <div class="error-message">
+        Página no Encontrada
+    </div>
+    
+    <div class="error-description">
+        La página que estás buscando no existe o ha sido movida.<br>
+        Regresa al sistema de análisis para continuar identificando enfermedades en caña de azúcar.
+    </div>
+    
+    <div class="flex gap-4 justify-center flex-wrap">
+        {{ link_button('Volver al Inicio', "/", icon="fas fa-home") }}
+        {{ link_button('Análisis de Enfermedades', "/", icon="fas fa-microscope") }}
+    </div>
+</div>
+
+<!-- Información adicional -->
+<div class="text-center mt-8">
+    <div class="result-card p-6 max-w-md mx-auto">
+        <h3 class="font-bold text-lg mb-4 text-slate-800">
+            <i class="fas fa-info-circle text-teal-600 mr-2"></i>¿Necesitas Ayuda?
+        </h3>
+        <p class="text-slate-600 mb-4">
+            SaccharumVision utiliza inteligencia artificial para identificar enfermedades en hojas de caña de azúcar.
+        </p>
+        <div class="text-sm text-slate-500">
+            <div class="flex items-center justify-center mb-2">
+                <i class="fas fa-check text-teal-500 mr-2"></i>
+                <span>Análisis con IA avanzada</span>
+            </div>
+            <div class="flex items-center justify-center mb-2">
+                <i class="fas fa-check text-teal-500 mr-2"></i>
+                <span>Resultados en tiempo real</span>
+            </div>
+            <div class="flex items-center justify-center">
+                <i class="fas fa-check text-teal-500 mr-2"></i>
+                <span>Precisión científica</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

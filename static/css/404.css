@@ -1,0 +1,66 @@
+/* 🔬 SaccharumVision - Página de Error 404 */
+
+/* Contenedor principal del error 404 */
+.error-404-container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid var(--accent-teal);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: var(--shadow-strong);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+.error-404-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(135deg, var(--accent-teal), var(--primary-green));
+}
+
+/* Ícono de error con animación */
+.error-icon {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 4rem;
+    margin: 0 auto 2rem;
+    box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+    animation: pulse-warning 2s infinite;
+}
+
+/* Código de error 404 */
+.error-code {
+    font-size: 5rem;
+    font-weight: 800;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+    line-height: 1;
+}
+
+/* Mensaje principal del error */
+.error-message {
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+    margin-bottom: 2rem;
+    line-height: 1.4;
+}
+
+/* Descripción detallada del error */
+.error-description {
+    color: #64748b;
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}

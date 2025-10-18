@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% from "macros.html" import button, upload_area, loading_spinner %}
+
+{% block title %}SaccharumVision - Análisis de Enfermedades{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="text-center mb-8">
+    <h2 class="text-3xl font-bold mb-4 text-slate-800">
+        <i class="fas fa-microscope mr-3 text-teal-600"></i>Sistema de Análisis
+    </h2>
+    <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+        Utiliza inteligencia artificial avanzada para identificar y clasificar enfermedades en hojas de caña de azúcar
+    </p>
+</div>
+
+<div class="two-column-layout">
+    <!-- Columna de Instrucciones -->
+    <div class="instructions-column">
+        <div class="instructions-card">
+            <h3 class="text-2xl font-bold mb-6 text-slate-800 text-center">
+                <i class="fas fa-info-circle mr-2 text-teal-600"></i>Guía de Uso
+            </h3>
+            
+            <div class="instruction-item">
+                <div class="instruction-icon">
+                    <i class="fas fa-image"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-slate-800">Selecciona una imagen</h4>
+                    <p class="text-sm text-slate-600">Foto clara de una hoja de caña de azúcar</p>
+                </div>
+            </div>
+            
+            <div class="instruction-item">
+                <div class="instruction-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-slate-800">Formatos soportados</h4>
+                    <p class="text-sm text-slate-600">JPG, PNG, BMP, TIFF (máx. 16MB)</p>
+                </div>
+            </div>
+            
+            <div class="instruction-item">
+                <div class="instruction-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-slate-800">Mejores resultados</h4>
+                    <p class="text-sm text-slate-600">Usa imágenes bien iluminadas y enfocadas</p>
+                </div>
+            </div>
+            
+            <div class="instruction-item">
+                <div class="instruction-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-slate-800">Inicia análisis</h4>
+                    <p class="text-sm text-slate-600">Haz clic en "Iniciar Análisis" y espera</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Columna de Upload -->
+    <div class="upload-column">
+        {{ upload_area() }}
+        
+        <div class="mt-6 text-center">
+            <div class="flex gap-4 justify-center">
+                {{ button('Reiniciar', id="resetBtn", hidden=True, icon="fas fa-times", classes="btn-scientific bg-gray-500 hover:bg-gray-600") }}
+                {{ button('Iniciar Análisis', id="analyzeBtn", hidden=True, icon="fas fa-play") }}
+                {{ button('Nuevo Análisis', id="newAnalysisBtn", hidden=True, icon="fas fa-redo") }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ loading_spinner('Analizando imagen con IA...', "Procesando con redes neuronales profundas", icon="fas fa-brain") }}
+
+<div class="hidden result-card p-8 mt-8 border-l-4 border-red-500" id="error">
+    <div class="flex items-center mb-4">
+        <i class="fas fa-exclamation-triangle text-3xl text-red-500 mr-4"></i>
+        <div>
+            <h3 class="font-bold text-xl text-red-700">Error en el Análisis</h3>
+            <p class="text-red-600" id="errorMessage"></p>
+        </div>
+    </div>
+</div>
+
+<div class="hidden mt-8" id="results">
+    <!-- Header de resultados -->
+    <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-slate-800">
+            <i class="fas fa-check-circle text-teal-500 mr-2"></i>Análisis Completado
+        </h2>
+    </div>
+
+    <!-- Layout de dos columnas para resultados -->
+    <div class="results-layout">
+        <!-- Columna de Diagnóstico -->
+        <div class="diagnosis-column">
+            <div class="section-title">
+                <div class="icon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <span>Diagnóstico Principal</span>
+            </div>
+            
+            <div class="diagnosis-card-compact">
+                <div class="diagnosis-main">
+                    <div class="diagnosis-icon mb-4">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="diagnosis-disease" id="mainDisease"></div>
+                    <div class="diagnosis-confidence" id="mainConfidence"></div>
+                </div>
+                
+                <div class="diagnosis-footer">
+                    <p id="analysisTime" class="text-slate-500 text-sm"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna de Probabilidades -->
+        <div class="probabilities-column">
+            <div class="section-title">
+                <div class="icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <span>Todas las Probabilidades</span>
+            </div>
+            
+            <div class="probabilities-card">
+                <div id="allPredictions"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

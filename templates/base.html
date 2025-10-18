@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SaccharumVision{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen p-6">
+    {% block header %}
+    <div class="max-w-5xl mx-auto main-container">
+        <div class="header-section text-white p-12 text-center relative z-10">
+            <div class="mb-6">
+                <i class="fas fa-microscope text-6xl mb-4 opacity-90"></i>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight">SaccharumVision</h1>
+            <p class="text-xl md:text-2xl opacity-90 font-light">{% block subtitle %}Análisis Inteligente de Enfermedades en Caña de Azúcar{% endblock %}</p>
+            <div class="mt-6 text-sm opacity-75">
+                <i class="fas fa-robot mr-2"></i>Powered by Deep Learning & Computer Vision
+            </div>
+        </div>
+    {% endblock %}
+
+        <div class="content-section p-12">
+            {% block content %}{% endblock %}
+        </div>
+
+        {% block footer %}
+        <div class="bg-gradient-to-r from-slate-50 to-slate-100 p-6 text-center text-slate-600 border-t border-slate-200">
+            <div class="flex items-center justify-center mb-2">
+                <i class="fas fa-microscope mr-2 text-teal-600"></i>
+                <span class="font-semibold">SaccharumVision</span>
+                <span class="mx-2">©</span>
+                <span>2025</span>
+            </div>
+            <p class="text-sm opacity-75">
+                Desarrollado con <i class="fas fa-heart text-red-500 mx-1"></i> para la ciencia agrícola
+            </p>
+            <div class="text-xs mt-2 opacity-60">
+                <span class="mx-2"><i class="fab fa-python mr-1"></i>TensorFlow</span>
+                <span class="mx-2"><i class="fas fa-flask mr-1"></i>Flask</span>
+                <span class="mx-2"><i class="fas fa-brain mr-1"></i>Deep Learning</span>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

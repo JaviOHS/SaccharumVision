@@ -1,0 +1,88 @@
+{# Macro para botones científicos #}
+{% macro button(text, id="", type="button", classes="btn-scientific", disabled=False, hidden=False, icon="") %}
+<button 
+    type="{{ type }}" 
+    {% if id %}id="{{ id }}"{% endif %}
+    class="{{ classes }}{% if disabled %} disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none{% endif %}{% if hidden %} hidden{% endif %}"
+    {% if disabled %}disabled{% endif %}
+>
+    {% if icon %}<i class="{{ icon }} mr-2"></i>{% endif %}{{ text }}
+</button>
+{% endmacro %}
+
+{# Macro para alertas #}
+{% macro alert(type, title, message, classes="") %}
+{% set alert_classes = {
+    'error': 'bg-red-50 text-red-700 border-red-500',
+    'success': 'bg-green-50 text-green-700 border-green-500',
+    'info': 'bg-blue-50 text-blue-700 border-blue-500',
+    'warning': 'bg-yellow-50 text-yellow-700 border-yellow-500'
+} %}
+<div class="p-5 rounded-lg mt-5 border-l-4 {{ alert_classes[type] }} {{ classes }}">
+    <h3 class="font-bold text-lg mb-2">
+        {% if type == 'error' %}<i class="fas fa-times-circle"></i>{% elif type == 'success' %}<i class="fas fa-check-circle"></i>{% elif type == 'warning' %}<i class="fas fa-exclamation-triangle"></i>{% else %}<i class="fas fa-info-circle"></i>{% endif %}
+        {{ title }}
+    </h3>
+    <p>{{ message }}</p>
+</div>
+{% endmacro %}
+
+{# Macro para el área de upload científica #}
+{% macro upload_area() %}
+<div class="upload-area-modern p-12 my-8 text-center cursor-pointer" id="uploadArea">
+    <div class="text-6xl mb-6 text-teal-600 relative z-10">
+        <i class="fas fa-cloud-upload-alt"></i>
+    </div>
+    <h3 class="font-bold text-2xl mb-4 text-slate-800">Cargar Imagen para Análisis</h3>
+    <p class="text-slate-600 mb-6 text-lg">Arrastra y suelta tu imagen aquí o selecciona un archivo</p>
+    <button type="button" id="uploadBtn" class="btn-scientific">
+        <i class="fas fa-image mr-2"></i>Seleccionar Archivo
+    </button>
+    <input type="file" id="fileInput" class="hidden" accept="image/*">
+    <div class="mt-6 text-sm text-slate-500">
+        <p><i class="fas fa-info-circle mr-1"></i> Formatos: JPG, PNG, BMP, TIFF | Máximo: 16MB</p>
+    </div>
+</div>
+{% endmacro %}
+
+{# Macro para spinner científico #}
+{% macro loading_spinner(message="Cargando...", submessage="", icon="") %}
+<div class="hidden text-center p-8 result-card mx-auto max-w-md" id="loading">
+    <div class="spinner-scientific mx-auto mb-6"></div>
+    <h3 class="text-xl font-semibold text-slate-800 mb-2">
+        {% if icon %}<i class="{{ icon }} mr-2 text-teal-600"></i>{% endif %}{{ message }}
+    </h3>
+    {% if submessage %}
+        <p class="text-slate-600">{{ submessage }}</p>
+        <div class="mt-4">
+            <div class="progress-bar-scientific h-2">
+                <div class="progress-fill-scientific" style="width: 0%; animation: progress-animation 3s ease-in-out infinite;"></div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+@keyframes progress-animation {
+    0%, 100% { width: 0%; }
+    50% { width: 80%; }
+}
+</style>
+{% endmacro %}
+
+{# Macro para instrucciones #}
+{% macro instructions(items) %}
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 my-5 text-blue-800">
+    <strong><i class="fas fa-info-circle"></i> Instrucciones:</strong><br>
+    {% for item in items %}
+    • {{ item }}<br>
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{# Macro para enlaces con estilo de botón #}
+{% macro link_button(text, href, classes="bg-gradient-to-r from-green-600 to-green-800 text-white px-8 py-4 rounded-full text-lg font-semibold no-underline inline-block transition-all duration-300 hover:-translate-y-1 hover:shadow-lg", icon="") %}
+<a href="{{ href }}" class="{{ classes }}">
+    {% if icon %}<i class="{{ icon }} pr-2"></i> {% endif %}{{ text }}
+</a>
+{% endmacro %}
