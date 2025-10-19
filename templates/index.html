@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import button, upload_area, loading_spinner %}
+{% from "macros.html" import button, upload_area, loading_spinner, file_selected, prediction_item, instructions %}
 
 {% block title %}SaccharumVision - Análisis de Enfermedades{% endblock %}
 
@@ -8,11 +8,21 @@
 {% endblock %}
 
 {% block content %}
+<!-- Templates ocultos para JavaScript -->
+<div class="hidden" id="templates">
+    <div id="fileSelectedTemplate">
+        {{ file_selected() }}
+    </div>
+    <div id="predictionItemTemplate">
+        {{ prediction_item() }}
+    </div>
+</div>
+
 <div class="text-center mb-8">
-    <h2 class="text-3xl font-bold mb-4 text-slate-800">
+    <h2 class="text-2xl font-bold mb-4 text-slate-800">
         <i class="fas fa-microscope mr-3 text-teal-600"></i>Sistema de Análisis
     </h2>
-    <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+    <p class="text-base text-slate-600 max-w-2xl mx-auto">
         Utiliza inteligencia artificial avanzada para identificar y clasificar enfermedades en hojas de caña de azúcar
     </p>
 </div>
@@ -20,51 +30,28 @@
 <div class="two-column-layout">
     <!-- Columna de Instrucciones -->
     <div class="instructions-column">
-        <div class="instructions-card">
-            <h3 class="text-2xl font-bold mb-6 text-slate-800 text-center">
-                <i class="fas fa-info-circle mr-2 text-teal-600"></i>Guía de Uso
-            </h3>
-            
-            <div class="instruction-item">
-                <div class="instruction-icon">
-                    <i class="fas fa-image"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-slate-800">Selecciona una imagen</h4>
-                    <p class="text-sm text-slate-600">Foto clara de una hoja de caña de azúcar</p>
-                </div>
-            </div>
-            
-            <div class="instruction-item">
-                <div class="instruction-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-slate-800">Formatos soportados</h4>
-                    <p class="text-sm text-slate-600">JPG, PNG, BMP, TIFF (máx. 16MB)</p>
-                </div>
-            </div>
-            
-            <div class="instruction-item">
-                <div class="instruction-icon">
-                    <i class="fas fa-lightbulb"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-slate-800">Mejores resultados</h4>
-                    <p class="text-sm text-slate-600">Usa imágenes bien iluminadas y enfocadas</p>
-                </div>
-            </div>
-            
-            <div class="instruction-item">
-                <div class="instruction-icon">
-                    <i class="fas fa-play"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-slate-800">Inicia análisis</h4>
-                    <p class="text-sm text-slate-600">Haz clic en "Iniciar Análisis" y espera</p>
-                </div>
-            </div>
-        </div>
+        {{ instructions("Guía de Uso", [
+            {
+                "icon": "fas fa-image",
+                "title": "Selecciona una imagen",
+                "description": "Foto clara de una hoja de caña de azúcar"
+            },
+            {
+                "icon": "fas fa-file-alt", 
+                "title": "Formatos soportados",
+                "description": "JPG, PNG, BMP, TIFF (máx. 16MB)"
+            },
+            {
+                "icon": "fas fa-lightbulb",
+                "title": "Mejores resultados", 
+                "description": "Usa imágenes bien iluminadas y enfocadas"
+            },
+            {
+                "icon": "fas fa-play",
+                "title": "Inicia análisis",
+                "description": "Haz clic en \"Iniciar Análisis\" y espera"
+            }
+        ]) }}
     </div>
     
     <!-- Columna de Upload -->
@@ -85,9 +72,9 @@
 
 <div class="hidden result-card p-8 mt-8 border-l-4 border-red-500" id="error">
     <div class="flex items-center mb-4">
-        <i class="fas fa-exclamation-triangle text-3xl text-red-500 mr-4"></i>
+        <i class="fas fa-exclamation-triangle text-2xl text-red-500 mr-4"></i>
         <div>
-            <h3 class="font-bold text-xl text-red-700">Error en el Análisis</h3>
+            <h3 class="font-bold text-lg text-red-700">Error en el Análisis</h3>
             <p class="text-red-600" id="errorMessage"></p>
         </div>
     </div>
@@ -96,7 +83,7 @@
 <div class="hidden mt-8" id="results">
     <!-- Header de resultados -->
     <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-slate-800">
+        <h2 class="text-xl font-bold text-slate-800">
             <i class="fas fa-check-circle text-teal-500 mr-2"></i>Análisis Completado
         </h2>
     </div>

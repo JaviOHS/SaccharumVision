@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import link_button %}
+{% from "macros.html" import link_button, info_section %}
 
 {% block title %}404 - Página no encontrada | SaccharumVision{% endblock %}
 
@@ -33,29 +33,24 @@
     </div>
 </div>
 
-<!-- Información adicional -->
-<div class="text-center mt-8">
-    <div class="result-card p-6 max-w-md mx-auto">
-        <h3 class="font-bold text-lg mb-4 text-slate-800">
-            <i class="fas fa-info-circle text-teal-600 mr-2"></i>¿Necesitas Ayuda?
-        </h3>
-        <p class="text-slate-600 mb-4">
-            SaccharumVision utiliza inteligencia artificial para identificar enfermedades en hojas de caña de azúcar.
-        </p>
-        <div class="text-sm text-slate-500">
-            <div class="flex items-center justify-center mb-2">
-                <i class="fas fa-check text-teal-500 mr-2"></i>
-                <span>Análisis con IA avanzada</span>
-            </div>
-            <div class="flex items-center justify-center mb-2">
-                <i class="fas fa-check text-teal-500 mr-2"></i>
-                <span>Resultados en tiempo real</span>
-            </div>
-            <div class="flex items-center justify-center">
-                <i class="fas fa-check text-teal-500 mr-2"></i>
-                <span>Precisión científica</span>
-            </div>
-        </div>
-    </div>
-</div>
+{{ info_section(
+    "¿Necesitas Ayuda?",
+    "SaccharumVision utiliza inteligencia artificial para identificar enfermedades en hojas de caña de azúcar.",
+    [
+        {
+            "icon": "fas fa-check",
+            "text": "Análisis con IA avanzada"
+        },
+        {
+            "icon": "fas fa-check",
+            "text": "Resultados en tiempo real"
+        },
+        {
+            "icon": "fas fa-check", 
+            "text": "Precisión científica"
+        }
+    ],
+    "fas fa-info-circle"
+) }}
+
 {% endblock %}

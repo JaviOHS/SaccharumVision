@@ -12,9 +12,73 @@ const error = document.getElementById('error');
 const newAnalysisBtn = document.getElementById('newAnalysisBtn');
 
 let selectedFile = null;
+let originalUploadContent = null;
+
+// Funciones helper para manejo de UI
+const UIManager = {
+    showButtons: (...buttons) => {
+        buttons.forEach(btn => btn?.classList.remove('hidden'));
+    },
+    
+    hideButtons: (...buttons) => {
+        buttons.forEach(btn => btn?.classList.add('hidden'));
+    },
+    
+    setButtonState: (button, disabled = false) => {
+        if (button) button.disabled = disabled;
+    },
+    
+    showFileSelected: (file) => {
+        const template = document.getElementById('fileSelectedTemplate');
+        const clone = template.cloneNode(true);
+        clone.id = '';
+        clone.classList.remove('hidden');
+        
+        // Actualizar el contenido con los datos del archivo
+        const fileName = clone.querySelector('.file-name');
+        const fileSize = clone.querySelector('.file-size');
+        
+        if (fileName) fileName.textContent = file.name;
+        if (fileSize) fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+        
+        uploadArea.innerHTML = '';
+        uploadArea.appendChild(clone);
+    },
+    
+    createPredictionItem: (disease, probability) => {
+        const template = document.getElementById('predictionItemTemplate');
+        const clone = template.cloneNode(true);
+        clone.id = '';
+        clone.classList.remove('hidden');
+        
+        // Actualizar contenido con los datos de predicción
+        const diseaseElement = clone.querySelector('.disease-name');
+        const progressBar = clone.querySelector('.probability-bar');
+        const percentageElement = clone.querySelector('.probability-value');
+        
+        if (diseaseElement) diseaseElement.textContent = disease;
+        if (progressBar) {
+            const color = getColorForProbability(probability);
+            progressBar.style.width = `${probability}%`;
+            progressBar.style.background = color.replace('background: ', '');
+        }
+        if (percentageElement) {
+            percentageElement.textContent = `${probability}%`;
+            // Limpiar clases de color existentes y agregar la nueva
+            percentageElement.className = percentageElement.className.replace(/text-(teal|orange|slate)-\d+/g, '');
+            const colorClass = probability >= 70 ? 'text-teal-700' : probability >= 50 ? 'text-orange-600' : 'text-slate-500';
+            percentageElement.classList.add(colorClass);
+        }
+        
+        return clone;
+    }
+};
 
 // Event listeners principales
 function initializeEventListeners() {
+    // Guardar el contenido original del área de upload
+    originalUploadContent = uploadArea.innerHTML;
+    
     uploadBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', handleFileSelect);
     analyzeBtn.addEventListener('click', analyzeImage);
@@ -64,19 +128,9 @@ function handleFile(file) {
 
     selectedFile = file;
     
-    // Actualizar UI
-    uploadArea.innerHTML = `
-        <div class="text-6xl mb-6 text-teal-600"><i class="fas fa-check-circle"></i></div>
-        <h3 class="font-bold text-2xl mb-4 text-slate-800">Archivo Seleccionado</h3>
-        <div class="result-card p-6 bg-white max-w-md mx-auto">
-            <p class="font-semibold text-lg text-slate-800">${file.name}</p>
-            <p class="text-teal-600 font-medium">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
-        </div>
-    `;
-    
-    // Mostrar botón de análisis y reiniciar
-    analyzeBtn.classList.remove('hidden');
-    resetBtn.classList.remove('hidden');
+    // Actualizar UI usando UIManager
+    UIManager.showFileSelected(file);
+    UIManager.showButtons(analyzeBtn, resetBtn);
     hideError();
     hideResultsWithAnimation();
 }
@@ -87,9 +141,9 @@ function analyzeImage() {
         return;
     }
 
-    // Mostrar loading
+    // Mostrar loading y deshabilitar botón
     showLoading();
-    analyzeBtn.disabled = true;
+    UIManager.setButtonState(analyzeBtn, true);
 
     // Crear FormData
     const formData = new FormData();
@@ -103,7 +157,7 @@ function analyzeImage() {
     .then(response => response.json())
     .then(data => {
         hideLoading();
-        analyzeBtn.disabled = false;
+        UIManager.setButtonState(analyzeBtn, false);
 
         if (data.error) {
             showError(data.error);
@@ -113,7 +167,7 @@ function analyzeImage() {
     })
     .catch(error => {
         hideLoading();
-        analyzeBtn.disabled = false;
+        UIManager.setButtonState(analyzeBtn, false);
         showError('Error de conexión. Verifique que el servidor esté funcionando.');
         console.error('Error:', error);
     });
@@ -130,37 +184,25 @@ function showResults(data) {
     // Actualizar el ícono según el diagnóstico
     updateDiagnosisIcon(data.prediccion_principal);
 
-    // Mostrar todas las probabilidades
+    // Mostrar todas las probabilidades usando UIManager
     const allPredictionsDiv = document.getElementById('allPredictions');
     allPredictionsDiv.innerHTML = '';
 
-    // Ordenar por probabilidad
+    // Ordenar por probabilidad y crear elementos
     const sortedPredictions = Object.entries(data.todas_probabilidades)
         .sort((a, b) => b[1] - a[1]);
 
     sortedPredictions.forEach(([disease, probability]) => {
-        const color = getColorForProbability(probability);
-        const predictionItem = document.createElement('div');
-        predictionItem.className = 'flex items-center mb-3 p-4 bg-white rounded-lg shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-md hover:border-teal-200';
-        predictionItem.innerHTML = `
-            <div class="font-semibold min-w-[100px] text-slate-800 text-sm">${disease}</div>
-            <div class="flex-1 mx-4">
-                <div class="progress-bar-scientific h-3">
-                    <div class="progress-fill-scientific transition-all duration-1000" style="width: ${probability}%; ${color}"></div>
-                </div>
-            </div>
-            <div class="font-bold min-w-[60px] text-right text-sm ${probability >= 70 ? 'text-teal-700' : probability >= 50 ? 'text-orange-600' : 'text-slate-500'}">${probability}%</div>
-        `;
+        const predictionItem = UIManager.createPredictionItem(disease, probability);
         allPredictionsDiv.appendChild(predictionItem);
     });
 
     // Mostrar resultados con animación
     showResultsWithAnimation();
     
-    // Ocultar botón de análisis y reiniciar, mostrar botón de nuevo análisis
-    analyzeBtn.classList.add('hidden');
-    resetBtn.classList.add('hidden');
-    newAnalysisBtn.classList.remove('hidden');
+    // Manejar botones usando UIManager
+    UIManager.hideButtons(analyzeBtn, resetBtn);
+    UIManager.showButtons(newAnalysisBtn);
 }
 
 function updateDiagnosisIcon(diagnosis) {
@@ -234,15 +276,24 @@ function hideResultsWithAnimation() {
     }
 }
 
+function restoreOriginalUploadArea() {
+    if (originalUploadContent) {
+        uploadArea.innerHTML = originalUploadContent;
+        // Re-asignar evento al botón de upload
+        const newUploadBtn = document.getElementById('uploadBtn');
+        if (newUploadBtn) {
+            newUploadBtn.addEventListener('click', () => fileInput.click());
+        }
+    }
+}
+
 function resetForm() {
     selectedFile = null;
     fileInput.value = '';
     
-    // Manejar botones
-    analyzeBtn.classList.add('hidden');
-    analyzeBtn.disabled = false;
-    resetBtn.classList.add('hidden');
-    newAnalysisBtn.classList.add('hidden');
+    // Manejar botones usando UIManager
+    UIManager.hideButtons(analyzeBtn, resetBtn, newAnalysisBtn);
+    UIManager.setButtonState(analyzeBtn, false);
     
     // Resetear el ícono del diagnóstico al estado por defecto
     const iconElement = document.querySelector('.diagnosis-icon');
@@ -254,22 +305,8 @@ function resetForm() {
         }
     }
     
-    uploadArea.innerHTML = `
-        <div class="text-6xl mb-6 text-teal-600 relative z-10">
-            <i class="fas fa-cloud-upload-alt"></i>
-        </div>
-        <h3 class="font-bold text-2xl mb-4 text-slate-800">Cargar Imagen para Análisis</h3>
-        <p class="text-slate-600 mb-6 text-lg">Arrastra y suelta tu imagen aquí o selecciona un archivo</p>
-        <button type="button" id="uploadBtn" class="btn-scientific">
-            <i class="fas fa-image mr-2"></i>Seleccionar Archivo
-        </button>
-        <div class="mt-6 text-sm text-slate-500">
-            <p><i class="fas fa-info-circle mr-1"></i> Formatos: JPG, PNG, BMP, TIFF | Máximo: 16MB</p>
-        </div>
-    `;
-    
-    // Re-asignar evento al nuevo botón
-    document.getElementById('uploadBtn').addEventListener('click', () => fileInput.click());
+    // Restaurar el contenido original del área de upload
+    restoreOriginalUploadArea();
     
     hideError();
     hideResultsWithAnimation();

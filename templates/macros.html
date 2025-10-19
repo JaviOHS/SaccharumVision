@@ -10,31 +10,21 @@
 </button>
 {% endmacro %}
 
-{# Macro para alertas #}
-{% macro alert(type, title, message, classes="") %}
-{% set alert_classes = {
-    'error': 'bg-red-50 text-red-700 border-red-500',
-    'success': 'bg-green-50 text-green-700 border-green-500',
-    'info': 'bg-blue-50 text-blue-700 border-blue-500',
-    'warning': 'bg-yellow-50 text-yellow-700 border-yellow-500'
-} %}
-<div class="p-5 rounded-lg mt-5 border-l-4 {{ alert_classes[type] }} {{ classes }}">
-    <h3 class="font-bold text-lg mb-2">
-        {% if type == 'error' %}<i class="fas fa-times-circle"></i>{% elif type == 'success' %}<i class="fas fa-check-circle"></i>{% elif type == 'warning' %}<i class="fas fa-exclamation-triangle"></i>{% else %}<i class="fas fa-info-circle"></i>{% endif %}
-        {{ title }}
-    </h3>
-    <p>{{ message }}</p>
-</div>
+{# Macro para enlaces con estilo de botón #}
+{% macro link_button(text, href, classes="btn-scientific", icon="") %}
+<a href="{{ href }}" class="{{ classes }}">
+    {% if icon %}<i class="{{ icon }} pr-2"></i> {% endif %}{{ text }}
+</a>
 {% endmacro %}
 
 {# Macro para el área de upload científica #}
 {% macro upload_area() %}
 <div class="upload-area-modern p-12 my-8 text-center cursor-pointer" id="uploadArea">
-    <div class="text-6xl mb-6 text-teal-600 relative z-10">
+    <div class="text-4xl mb-6 text-teal-600 relative z-10">
         <i class="fas fa-cloud-upload-alt"></i>
     </div>
-    <h3 class="font-bold text-2xl mb-4 text-slate-800">Cargar Imagen para Análisis</h3>
-    <p class="text-slate-600 mb-6 text-lg">Arrastra y suelta tu imagen aquí o selecciona un archivo</p>
+    <h3 class="font-bold text-xl mb-4 text-slate-800">Cargar Imagen para Análisis</h3>
+    <p class="text-slate-600 mb-6 text-base">Arrastra y suelta tu imagen aquí o selecciona un archivo</p>
     <button type="button" id="uploadBtn" class="btn-scientific">
         <i class="fas fa-image mr-2"></i>Seleccionar Archivo
     </button>
@@ -49,7 +39,7 @@
 {% macro loading_spinner(message="Cargando...", submessage="", icon="") %}
 <div class="hidden text-center p-8 result-card mx-auto max-w-md" id="loading">
     <div class="spinner-scientific mx-auto mb-6"></div>
-    <h3 class="text-xl font-semibold text-slate-800 mb-2">
+    <h3 class="text-lg font-semibold text-slate-800 mb-2">
         {% if icon %}<i class="{{ icon }} mr-2 text-teal-600"></i>{% endif %}{{ message }}
     </h3>
     {% if submessage %}
@@ -70,19 +60,74 @@
 </style>
 {% endmacro %}
 
-{# Macro para instrucciones #}
-{% macro instructions(items) %}
-<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 my-5 text-blue-800">
-    <strong><i class="fas fa-info-circle"></i> Instrucciones:</strong><br>
+{# Macro para instrucciones con diseño moderno #}
+{% macro instructions(title="Guía de Uso", items=[]) %}
+<div class="instructions-card">
+    <h3 class="text-xl font-bold mb-6 text-slate-800 text-center">
+        <i class="fas fa-info-circle mr-2 text-teal-600"></i>{{ title }}
+    </h3>
+    
     {% for item in items %}
-    • {{ item }}<br>
+    <div class="instruction-item">
+        <div class="instruction-icon">
+            <i class="{{ item.icon }}"></i>
+        </div>
+        <div>
+            <h4 class="font-semibold text-slate-800">{{ item.title }}</h4>
+            <p class="text-sm text-slate-600">{{ item.description }}</p>
+        </div>
+    </div>
     {% endfor %}
 </div>
 {% endmacro %}
 
-{# Macro para enlaces con estilo de botón #}
-{% macro link_button(text, href, classes="bg-gradient-to-r from-green-600 to-green-800 text-white px-8 py-4 rounded-full text-lg font-semibold no-underline inline-block transition-all duration-300 hover:-translate-y-1 hover:shadow-lg", icon="") %}
-<a href="{{ href }}" class="{{ classes }}">
-    {% if icon %}<i class="{{ icon }} pr-2"></i> {% endif %}{{ text }}
-</a>
+{# Macro para sección de información adicional #}
+{% macro info_section(title="¿Necesitas Ayuda?", description="", features=[], icon="fas fa-info-circle") %}
+<div class="text-center mt-8">
+    <div class="result-card p-6 max-w-md mx-auto">
+        <h3 class="font-bold text-lg mb-4 text-slate-800">
+            <i class="{{ icon }} text-teal-600 mr-2"></i>{{ title }}
+        </h3>
+        {% if description %}
+        <p class="text-slate-600 mb-4">
+            {{ description }}
+        </p>
+        {% endif %}
+        {% if features %}
+        <div class="text-sm text-slate-500">
+            {% for feature in features %}
+            <div class="flex items-center justify-center {% if not loop.last %}mb-2{% endif %}">
+                <i class="{{ feature.icon }} text-teal-500 mr-2"></i>
+                <span>{{ feature.text }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+{# Macro para mostrar archivo seleccionado #}
+{% macro file_selected(filename="", filesize="") %}
+<div class="file-selected-content">
+    <div class="text-4xl mb-6 text-teal-600"><i class="fas fa-check-circle"></i></div>
+    <h3 class="font-bold text-xl mb-4 text-slate-800">Archivo Seleccionado</h3>
+    <div class="result-card p-6 bg-white max-w-md mx-auto">
+        <p class="font-semibold text-base text-slate-800 file-name">{{ filename }}</p>
+        <p class="text-teal-600 font-medium file-size">{{ filesize }}</p>
+    </div>
+</div>
+{% endmacro %}
+
+{# Macro para item de predicción #}
+{% macro prediction_item(disease="", probability=0, color="") %}
+<div class="prediction-item flex items-center mb-3 p-4 bg-white rounded-lg shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-md hover:border-teal-200">
+    <div class="font-semibold min-w-[100px] text-slate-800 text-sm disease-name">{{ disease }}</div>
+    <div class="flex-1 mx-4">
+        <div class="progress-bar-scientific h-3">
+            <div class="progress-fill-scientific transition-all duration-1000 probability-bar" style="width: {{ probability }}%; {{ color }}"></div>
+        </div>
+    </div>
+    <div class="font-bold min-w-[60px] text-right text-sm probability-value {% if probability >= 70 %}text-teal-700{% elif probability >= 50 %}text-orange-600{% else %}text-slate-500{% endif %}">{{ probability }}%</div>
+</div>
 {% endmacro %}
