@@ -27,7 +27,7 @@ const UIManager = {
     setButtonState: (button, disabled = false) => {
         if (button) button.disabled = disabled;
     },
-    
+
     showFileSelected: (file) => {
         const template = document.getElementById('fileSelectedTemplate');
         const clone = template.cloneNode(true);
@@ -71,7 +71,42 @@ const UIManager = {
         }
         
         return clone;
+    },
+
+    showElement: (el) => {
+        if (el) {
+            el.classList.remove('hidden', 'hide');
+            el.classList.add('show');
+        }
+    },
+    hideElement: (el) => {
+        if (el) {
+            el.classList.remove('show');
+            el.classList.add('hidden');
+        }
+    },
+    resetDiagnosisIcon: () => {
+        const iconElement = document.querySelector('.diagnosis-icon');
+        if (iconElement) {
+            iconElement.classList.remove('healthy', 'warning');
+            const iconInner = iconElement.querySelector('i');
+            if (iconInner) {
+                iconInner.className = 'fas fa-leaf';
+            }
+        }
     }
+};
+
+// Función utilitaria para validar archivos
+const validateFile = (file) => {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp', 'image/tiff'];
+    if (!validTypes.includes(file.type)) {
+        return 'Tipo de archivo no válido. Use JPG, PNG, BMP o TIFF.';
+    }
+    if (file.size > 16 * 1024 * 1024) {
+        return 'Archivo demasiado grande. Máximo 16MB.';
+    }
+    return null;
 };
 
 // Event listeners principales
@@ -113,26 +148,17 @@ function handleFileSelect(e) {
 }
 
 function handleFile(file) {
-    // Validar tipo de archivo
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp', 'image/tiff'];
-    if (!validTypes.includes(file.type)) {
-        showError('Tipo de archivo no válido. Use JPG, PNG, BMP o TIFF.');
+    const errorMsg = validateFile(file);
+    if (errorMsg) {
+        showError(errorMsg);
         return;
     }
-
-    // Validar tamaño (16MB)
-    if (file.size > 16 * 1024 * 1024) {
-        showError('Archivo demasiado grande. Máximo 16MB.');
-        return;
-    }
-
     selectedFile = file;
-    
     // Actualizar UI usando UIManager
     UIManager.showFileSelected(file);
     UIManager.showButtons(analyzeBtn, resetBtn);
     hideError();
-    hideResultsWithAnimation();
+    hideResults();
 }
 
 function analyzeImage() {
@@ -198,11 +224,15 @@ function showResults(data) {
     });
 
     // Mostrar resultados con animación
-    showResultsWithAnimation();
+    displayResults();
     
     // Manejar botones usando UIManager
     UIManager.hideButtons(analyzeBtn, resetBtn);
     UIManager.showButtons(newAnalysisBtn);
+}
+
+function displayResults() {
+    UIManager.showElement(results);
 }
 
 function updateDiagnosisIcon(diagnosis) {
@@ -248,32 +278,15 @@ function hideError() {
 function showLoading() {
     loading.classList.remove('hidden');
     hideError();
-    hideResultsWithAnimation();
+    hideResults();
 }
 
 function hideLoading() {
     loading.classList.add('hidden');
 }
 
-function showResultsWithAnimation() {
-    results.classList.remove('hidden');
-    results.classList.remove('hide');
-    results.classList.add('show');
-}
-
-function hideResultsWithAnimation() {
-    if (!results.classList.contains('hidden')) {
-        results.classList.remove('show');
-        results.classList.add('hide');
-        
-        // Ocultar después de la animación
-        setTimeout(() => {
-            results.classList.add('hidden');
-            results.classList.remove('hide');
-        }, 400); // Duración de la animación fadeOutDown
-    } else {
-        // No hacer nada si ya está oculto
-    }
+function hideResults() {
+    UIManager.hideElement(results);
 }
 
 function restoreOriginalUploadArea() {
@@ -290,26 +303,15 @@ function restoreOriginalUploadArea() {
 function resetForm() {
     selectedFile = null;
     fileInput.value = '';
-    
     // Manejar botones usando UIManager
     UIManager.hideButtons(analyzeBtn, resetBtn, newAnalysisBtn);
     UIManager.setButtonState(analyzeBtn, false);
-    
     // Resetear el ícono del diagnóstico al estado por defecto
-    const iconElement = document.querySelector('.diagnosis-icon');
-    if (iconElement) {
-        iconElement.classList.remove('healthy', 'warning');
-        const iconInner = iconElement.querySelector('i');
-        if (iconInner) {
-            iconInner.className = 'fas fa-leaf';
-        }
-    }
-    
+    UIManager.resetDiagnosisIcon();
     // Restaurar el contenido original del área de upload
     restoreOriginalUploadArea();
-    
     hideError();
-    hideResultsWithAnimation();
+    hideResults();
     hideLoading();
 }
 
