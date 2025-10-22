@@ -56,7 +56,7 @@ Aplicación web Flask para el análisis inteligente de enfermedades en hojas de 
    
    1. **Entrenar el modelo** usando el siguiente notebook de Google Colab:
       
-      [📓 Abrir Notebook en Google Colab](https://drive.google.com/file/d/1m7BITiF2BjOoddwkzuBfV9WMHYP6kSHx/view?usp=sharing)
+      [📓 Abrir Notebook en Google Colab](https://drive.google.com/file/d/1IMZrRe38-Opq0Av49moYVYU6wLSam9FM/view?usp=sharing)
    
    2. **Ejecutar todas las celdas** del notebook para entrenar el modelo
    
@@ -93,6 +93,34 @@ La aplicación estará disponible en: http://localhost:5000
 4. **Ver los resultados** con la predicción y probabilidades
 
 ## 📁 Estructura del Proyecto
+
+```
+SaccharumVision/
+├── app.py
+├── config/
+│   └── config.py
+├── models/
+│   ├── saccharum_classes_latest.json
+│   └── saccharum_vision_latest.keras
+├── README.md
+├── requirements.txt
+├── static/
+│   ├── css/
+│   │   ├── 404.css
+│   │   └── style.css
+│   ├── ico/
+│   │   └── favicon.ico
+│   └── js/
+│       └── main.js
+├── templates/
+│   ├── 404.html
+│   ├── base.html
+│   ├── index.html
+│   └── macros.html
+└── utils/
+    ├── model_manager.py
+    └── utils.py
+```
 
 ## ⚙️ Configuración
 
