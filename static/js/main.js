@@ -118,7 +118,7 @@ function initializeEventListeners() {
     fileInput.addEventListener('change', handleFileSelect);
     analyzeBtn.addEventListener('click', analyzeImage);
     resetBtn.addEventListener('click', resetForm);
-    newAnalysisBtn.addEventListener('click', resetForm);
+    newAnalysisBtn.addEventListener('click', () => resetForm(true));
 
     // Drag and drop eventos
     uploadArea.addEventListener('dragover', (e) => {
@@ -225,10 +225,13 @@ function showResults(data) {
 
     // Mostrar resultados con animación
     displayResults();
-    
-    // Manejar botones usando UIManager
     UIManager.hideButtons(analyzeBtn, resetBtn);
     UIManager.showButtons(newAnalysisBtn);
+
+    // Scroll hacia la sección de resultados
+    setTimeout(() => {
+        scrollToResultsSection();
+    }, 100);
 }
 
 function displayResults() {
@@ -300,19 +303,35 @@ function restoreOriginalUploadArea() {
     }
 }
 
-function resetForm() {
+function scrollToUploadSection() {
+    const uploadSection = document.getElementById('uploadSection');
+    if (uploadSection) {
+        uploadSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function scrollToResultsSection() {
+    const resultsSection = document.getElementById('resultsSection');
+    if (resultsSection) {
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function resetForm(scroll = false) {
     selectedFile = null;
     fileInput.value = '';
-    // Manejar botones usando UIManager
     UIManager.hideButtons(analyzeBtn, resetBtn, newAnalysisBtn);
     UIManager.setButtonState(analyzeBtn, false);
-    // Resetear el ícono del diagnóstico al estado por defecto
     UIManager.resetDiagnosisIcon();
-    // Restaurar el contenido original del área de upload
     restoreOriginalUploadArea();
     hideError();
     hideResults();
     hideLoading();
+    if (scroll) {
+        setTimeout(() => {
+            scrollToUploadSection();
+        }, 100);
+    }
 }
 
 function checkServerHealth() {

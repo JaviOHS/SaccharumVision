@@ -55,14 +55,13 @@
     </div>
     
     <!-- Columna de Upload -->
-    <div class="upload-column">
+    <div class="upload-column" id="uploadSection">
         {{ upload_area() }}
         
         <div class="mt-6 text-center">
             <div class="flex gap-4 justify-center">
                 {{ button('Reiniciar', id="resetBtn", hidden=True, icon="fas fa-times", classes="btn-scientific bg-gray-500 hover:bg-gray-600") }}
                 {{ button('Iniciar Análisis', id="analyzeBtn", hidden=True, icon="fas fa-play") }}
-                {{ button('Nuevo Análisis', id="newAnalysisBtn", hidden=True, icon="fas fa-redo") }}
             </div>
         </div>
     </div>
@@ -89,7 +88,7 @@
     </div>
 
     <!-- Layout de dos columnas para resultados -->
-    <div class="results-layout">
+    <div class="results-layout" id="resultsSection">
         <!-- Columna de Diagnóstico -->
         <div class="diagnosis-column">
             <div class="section-title">
@@ -128,7 +127,11 @@
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Columna para botón de nuevo análisis -->
+    <div class="flex justify-center mt-6 mb-4">
+        {{ button('Nuevo Análisis', id="newAnalysisBtn", hidden=True, icon="fas fa-redo") }}
+    </div>
 
 {% endblock %}
 
